@@ -1,0 +1,46 @@
+.button-box {
+    background: rgba(255, 255, 255, .46);
+    border-radius: 50px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px #0000001a;
+    width: 50em;
+    height: 8em;
+    margin-top: 40px;
+}
+
+.reminder-text {
+    font-size: 1.5em;
+    color: #19484f;
+}
+
+.reminder-button {
+    background: #14406e;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.reminder-button:hover {
+    background: rgb(42, 98, 150);
+}
+
+.gradient-text {
+    background: linear-gradient(180deg, #4cd0e4, #3babbc, #19484f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+}
+
+.gradient-text-parents {
+    background: linear-gradient(180deg, #4ce498, #329965, #16452d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+}

@@ -10,9 +10,9 @@ function Navbar() {
           <div className="title-font">Safety Pinpoint</div>
         </div>
         <div className="navbar-right ">
-          <Link to="/home">Home</Link>
-          <Link to="/about">About</Link>
-          <Link to="/contact">Contact</Link>
+          <Link to="/home">See The Data!</Link>
+          <Link to="/vaccination-reminders">Vaccination Reminders</Link>
+          <Link to="/as-to-qs">Answers To Your Questions</Link>
         </div>
       </div>
     </>
