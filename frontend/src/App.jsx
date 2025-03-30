@@ -6,6 +6,7 @@ import SetReminder from  './SetReminder/SetReminder'
 import WelcomePage from './WelcomePage/Welcome';
 import Home from  './Home/Home'
 import { useAuth0 } from '@auth0/auth0-react';
+import ChatBot from './components/ChatBot';
 
 
 function App() {
@@ -29,6 +30,9 @@ function App() {
           } />
           <Route path="/set-reminder/parent" element={ 
             user? <SetReminder /> : <Navigate to="/" />
+          } />
+          <Route path="/as-to-qs" element={ 
+             user? <ChatBot /> : <Navigate to="/" />
           } />
           <Route path="/home" element={
             <Home />
