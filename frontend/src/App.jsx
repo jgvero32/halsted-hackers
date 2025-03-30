@@ -15,6 +15,7 @@ function App() {
   return (
     <div className="app-background">
       <Navbar />
+
       {!isLoading && (
         <Routes>
           <Route path="/" element={
@@ -23,7 +24,10 @@ function App() {
           <Route path="/vaccination-reminders" element={
             user? <VaccinationReminders /> : <Navigate to="/" />
           } />
-          <Route path="/set-reminder/:type" element={ 
+          <Route path="/set-reminder/children/:selectedChild" element={ 
+            user? <SetReminder /> : <Navigate to="/" />
+          } />
+          <Route path="/set-reminder/parent" element={ 
             user? <SetReminder /> : <Navigate to="/" />
           } />
           <Route path="/home" element={

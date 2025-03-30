@@ -13,7 +13,7 @@ function Navbar() {
         <div className="navbar-left">
           <Link to="/" style={{textDecoration: "none", display: "flex"}}>
             <img src="/safety-pin.png" alt="safety-pin" style={{ width: '40px' }} />
-            <div className="title-font">Safety Pinpoint</div>
+            <div className="title-font">  Safety Pinpoint</div>
           </Link>
         </div>
         <div className="navbar-right ">
