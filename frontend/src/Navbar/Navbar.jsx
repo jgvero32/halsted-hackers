@@ -11,8 +11,10 @@ function Navbar() {
     <>
       <div className="source-sans-3 navbar">
         <div className="navbar-left">
-          <img src="/safety-pin.png" alt="safety-pin" style={{ width: '40px' }} />
-          <div className="title-font">Safety Pinpoint</div>
+          <Link to="/" style={{textDecoration: "none", display: "flex"}}>
+            <img src="/safety-pin.png" alt="safety-pin" style={{ width: '40px' }} />
+            <div className="title-font">  Safety Pinpoint</div>
+          </Link>
         </div>
         <div className="navbar-right ">
           <Link to="/home">See The Data!</Link>
