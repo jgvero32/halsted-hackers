@@ -27,7 +27,7 @@ function Chart({param}) {
                     color: { field: "UNIT", type: "nominal" },
                 },
                 "title":{
-                    text: `Mortality Rate for ${param}`,
+                    text: `Mortality Rate per 1,000 Births for ${param}`,
                     fontSize: 24,
                     subtitle: "Data from NCHS via data.cdc.gov/",
                     subtitleFontSize: 12,
@@ -56,7 +56,7 @@ function Chart({param}) {
                     color: { field: "UNIT", type: "nominal" },
                 },
                 "title":{
-                    text: `Mortality Rate for ${param}`,
+                    text: `Mortality Rate per 1,000 Births for ${param}`,
                     fontSize: 24,
                     subtitle: "Data from NCHS via data.cdc.gov/",
                     subtitleFontSize: 12,
