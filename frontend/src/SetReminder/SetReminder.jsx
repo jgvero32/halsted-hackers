@@ -30,8 +30,8 @@ function SetReminder() {
         doses: Array.from({ length: vaccine.doses }).map((_, doseIndex) => ({
             dose_name: `Dose ${doseIndex + 1}`,
             dose_status: selectedItems.includes(`${vaccine.name} - Dose ${doseIndex + 1}`),
-            start_date: new Date(),
-            end_date: new Date(),
+            start_date: new Date().toISOString(),
+            end_date: new Date().toISOString(),
         })),
         })),
     };
