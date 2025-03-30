@@ -14,9 +14,10 @@ function App() {
       <Routes>
         <Route path="/" element={<WelcomePage />} />
         <Route path="vaccination-reminders" element={ <VaccinationReminders />} />
-        <Route path="set-reminder/:type" element={ <SetReminder />} />
+        <Route path="set-reminder/children/:selectedChild" element={ <SetReminder />} />
+        <Route path="set-reminder/parent" element={ <SetReminder />} />
         <Route path="/home" element={ <Home />} />
-        </Routes>
+      </Routes>
     </div>
   );
 }

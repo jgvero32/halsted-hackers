@@ -3,16 +3,29 @@ import { useParams, useNavigate } from 'react-router-dom';
 import styles from './SetReminder.module.css';
 
 function SetReminder() {
-  const { type } = useParams();
+    const isParent = window.location.pathname.includes('parent');
+    const type = isParent ? 'parent' : 'child';
   const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [parentVaccines, setParentVaccines] = useState([{ name: '', startDate: '' }]);
+
 
   const handleCheckboxChange = (e) => {
     const { value, checked } = e.target;
     setSelectedItems((prev) =>
       checked ? [...prev, value] : prev.filter((item) => item !== value)
     );
+  };
+
+  const handleParentInputChange = (index, field, value) => {
+    const updatedVaccines = [...parentVaccines];
+    updatedVaccines[index][field] = value;
+    setParentVaccines(updatedVaccines);
+  };
+
+  const addParentVaccine = () => {
+    setParentVaccines([...parentVaccines, { name: '', startDate: '' }]);
   };
 
   const handleSubmit = async (e) => {
@@ -60,12 +73,17 @@ function SetReminder() {
 
   const closeModal = () => {
     setIsModalOpen(false);
-    navigate('/vaccination-reminders');
+    if (type === 'parent') {
+        setParentVaccines([{ name: '', startDate: '' }]);
+      } else {
+        setSelectedItems([]);
+      }
   };
 
   const resetForm = () => {
     setSelectedItems([]);
     setIsModalOpen(false);
+    navigate('/vaccination-reminders');
   };
 
   const vaccines = [
@@ -93,6 +111,38 @@ function SetReminder() {
 
   return (
     <div className={styles.formBox}>
+
+{type === 'parent' ? (
+        <>
+          <h2 className={styles.questionTitle}>Enter Vaccines You Want to Be Notified About</h2>
+          <form className={styles.formItems} onSubmit={handleSubmit}>
+            {parentVaccines.map((vaccine, index) => (
+              <div key={index} className={styles.vaccineRow}>
+                <input
+                  type="text"
+                  placeholder="Vaccine Name"
+                  value={vaccine.name}
+                  onChange={(e) => handleParentInputChange(index, 'name', e.target.value)}
+                  className={styles.inputField}
+                />
+                <input
+                  type="date"
+                  value={vaccine.startDate}
+                  onChange={(e) => handleParentInputChange(index, 'startDate', e.target.value)}
+                  className={styles.inputField}
+                />
+              </div>
+            ))}
+            <button type="button" onClick={addParentVaccine} className={styles.closeButton}>
+              Add Another Vaccine
+            </button>
+            <button type="submit" className={styles.submitButton}>
+              Submit
+            </button>
+          </form>
+        </>
+      ) : (
+        <>
       <span className={styles.questionTitle}>Which vaccines has your child already received?</span>
       <form className={styles.formItems} onSubmit={handleSubmit}>
         <div className={styles.headerRow}>
@@ -128,25 +178,39 @@ function SetReminder() {
           </button>
         </div>
       </form>
-
+      </>
+      )}
       {isModalOpen && (
         <div className={styles.modal}>
           <div className={styles.modalContent}>
-            <h2 className={styles.questionTitle}>Yay! Your reminders for the following vaccines have been set:</h2>
-            <ul>
-              {unselectedVaccines.map((vaccine, index) => (
-                <li className={styles.vaccineLabel} key={index}>
-                  <strong>{vaccine.name}:</strong> {vaccine.doses.join(', ')}
-                </li>
-              ))}
-            </ul>
-            <div className={styles.buttonsBox}>
-              <button onClick={closeModal} className={styles.closeButton}>
-                Close
-              </button>
-              <button onClick={resetForm} className={styles.closeButton}>
-                Set Reminders For Another Child
-              </button>
+          <h2 className={styles.questionTitle}>
+        {type === 'parent'
+          ? 'Your Vaccine Notifications Have Been Set!'
+          : 'Yay! Your reminders for the following vaccines have been set:'}
+      </h2>
+      <ul>
+        {type === 'parent'
+          ? parentVaccines.map((vaccine, index) => (
+              <li key={index} className={styles.vaccineLabel}>
+                <strong>Vaccine:</strong> {vaccine.name || 'N/A'} <br />
+                <strong>Start Date:</strong> {vaccine.startDate || 'N/A'}
+              </li>
+            ))
+          : unselectedVaccines.map((vaccine, index) => (
+              <li key={index} className={styles.vaccineLabel}>
+                <strong>{vaccine.name}:</strong> {vaccine.doses.join(', ')}
+              </li>
+            ))}
+      </ul>
+      <div className={styles.buttonsBox}>
+        <button onClick={closeModal} className={styles.closeButton}>
+          Close
+        </button>
+        <button onClick={resetForm} className={styles.closeButton}>
+          {type === 'parent'
+            ? 'Add More Vaccines'
+            : 'Set Reminders For Another Child'}
+        </button>
             </div>
           </div>
         </div>
