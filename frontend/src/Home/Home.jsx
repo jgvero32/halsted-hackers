@@ -66,12 +66,12 @@ function Home() {
             <p className='text'>As seen in the chart above, the Perinatal period of pregnancy has the most risk of any other part of the pregnancy. 
                 Additionally, certain racial groups have higher rates of mortality than others, especially Black/African American mothers. The pregnancy
                 time frame categories are measured as follows:
-                <ul>
-                    <li>Perinatal: 20 weeks gestation to 7 days after birth</li>
-                    <li>Neonatal: 0 days after birth to 28 days after birth</li>
-                    <li>Postneonatal: 28 days after birth to 1 year after birth</li>
-                </ul>
             </p>
+            <ul>
+                <li>Perinatal: 20 weeks gestation to 7 days after birth</li>
+                <li>Neonatal: 0 days after birth to 28 days after birth</li>
+                <li>Postneonatal: 28 days after birth to 1 year after birth</li>
+            </ul>
 
         </div>
         <div className="container">
