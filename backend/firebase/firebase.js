@@ -1,6 +1,7 @@
 import { initializeApp, cert, getApps } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
+import { initialVaccines } from "../data";
 
 const activeApps = getApps();
 const serviceAccount = {
@@ -60,6 +61,11 @@ export const getAllVaccinesForChild = async (parentId, childId) => {
     }
   }
   return vaccines
+}
+
+export const initVaccineForChild = async (parentId, childId) => {
+  const vaccines = initialVaccines()
+  await db.collection("VaccinesForChildren").doc(`${parentId},${childId}`).set(vaccines)
 }
 
 export const updateDoseForParent = async (parentId, dose) => {

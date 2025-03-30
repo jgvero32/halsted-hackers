@@ -23,8 +23,6 @@ function SetReminder() {
     const childId = "0";
 
     const formattedData = {
-        parentId,
-        childId,
         vaccines: vaccines.map((vaccine) => ({
         vaccine_name: vaccine.name,
         doses: Array.from({ length: vaccine.doses }).map((_, doseIndex) => ({
@@ -39,7 +37,7 @@ function SetReminder() {
     console.log("Formatted Data:", formattedData);
 
     try {
-        const response = await fetch(`/dose/${parentId}/${childId}`, {
+        const response = await fetch(`http://localhost:5000/dose/${parentId}/${childId}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

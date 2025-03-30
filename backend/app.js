@@ -5,7 +5,9 @@ import { sendEmail } from "./nodemailer/nodemailer.js";
 import { db, getAllVaccinesForChild, getAllVaccinesForParent, updateDoseForChild, updateDoseForParent } from "./firebase/firebase.js";
 import morgan from "morgan";
 
-// import "./cron/cron.js" // run cron job
+import "./cron/cron.js" // run cron job
+
+import { initialVaccines } from "./data.js";
 
 dotenv.config()
 
@@ -42,13 +44,15 @@ app.get("/vaccine/:parentId/:childId", async (req, res) => {
   }
 })
 
-// // initialize vaccines for parent
-// app.post("/vaccine/:parentId", (req, res) => {
-//   res.json({})
-// })
+// initialize vaccines for parent
+app.post("/vaccine/:parentId/", (req, res) => {
+  
+  res.json({})
+})
 
 // initialize vaccines for child
 app.post("/vaccine/:parentId/:childId", (req, res) => {
+
   res.json({})
 })
 
