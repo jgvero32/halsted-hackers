@@ -10,7 +10,7 @@ createRoot(document.getElementById('root')).render(
     domain="dev-f10vt2crej66q3h4.us.auth0.com"
     clientId="0smfFHZTTLzUhN1G86ZCFkUZMn257yzI"
     authorizationParams={{
-      redirect_uri: `${window.location.origin}/vaccination-reminders`
+      redirect_uri: `${window.location.origin}/home`
     }}
   >
     <BrowserRouter>

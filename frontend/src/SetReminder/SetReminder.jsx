@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import styles from './SetReminder.module.css';
 
 function SetReminder() {
   const { type } = useParams();
+  const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -14,13 +15,52 @@ function SetReminder() {
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsModalOpen(true);
-  };
+
+    const parentId = "0";
+    const childId = "0";
+
+    const formattedData = {
+        parentId,
+        childId,
+        vaccines: vaccines.map((vaccine) => ({
+        vaccine_name: vaccine.name,
+        doses: Array.from({ length: vaccine.doses }).map((_, doseIndex) => ({
+            dose_name: `Dose ${doseIndex + 1}`,
+            dose_status: selectedItems.includes(`${vaccine.name} - Dose ${doseIndex + 1}`),
+            start_date: new Date().toISOString(),
+            end_date: new Date().toISOString(),
+        })),
+        })),
+    };
+
+    console.log("Formatted Data:", formattedData);
+
+    try {
+        const response = await fetch(`/dose/${parentId}/${childId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formattedData),
+        });
+    
+        if (response.ok) {
+          console.log("Data successfully sent to the backend!");
+          setIsModalOpen(true);
+        } else {
+          console.error("Failed to send data to the backend:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error while sending data to the backend:", error);
+      }
+    };
 
   const closeModal = () => {
     setIsModalOpen(false);
+    navigate('/vaccination-reminders');
   };
 
   const resetForm = () => {
@@ -42,6 +82,14 @@ function SetReminder() {
     { name: 'Chickenpox', doses: 2, tooltip: 'Prevents chickenpox (varicella), which is a contagious viral infection that causes fever, headache, and an itchy, blistering rash; spread through air and direct contact.' },
     { name: 'Hepatitis A', doses: 2, tooltip: 'Prevents Hepatitis A virus infection. Disease complications include liver failure and death.' },
   ];
+
+  // Calculate unselected vaccines and doses
+  const unselectedVaccines = vaccines.map((vaccine) => {
+    const unselectedDoses = Array.from({ length: vaccine.doses })
+      .map((_, doseIndex) => `Dose ${doseIndex + 1}`)
+      .filter((dose) => !selectedItems.includes(`${vaccine.name} - ${dose}`));
+    return { name: vaccine.name, doses: unselectedDoses };
+  }).filter((vaccine) => vaccine.doses.length > 0); // Only include vaccines with unselected doses
 
   return (
     <div className={styles.formBox}>
@@ -86,8 +134,10 @@ function SetReminder() {
           <div className={styles.modalContent}>
             <h2 className={styles.questionTitle}>Yay! Your reminders for the following vaccines have been set:</h2>
             <ul>
-              {selectedItems.map((item, index) => (
-                <li className={styles.vaccineLabel} key={index}>{item}</li>
+              {unselectedVaccines.map((vaccine, index) => (
+                <li className={styles.vaccineLabel} key={index}>
+                  <strong>{vaccine.name}:</strong> {vaccine.doses.join(', ')}
+                </li>
               ))}
             </ul>
             <div className={styles.buttonsBox}>

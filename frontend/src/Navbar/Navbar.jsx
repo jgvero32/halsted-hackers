@@ -1,6 +1,7 @@
 import './Navbar.css';
 import { Link } from 'react-router-dom';
 import { useAuth0 } from "@auth0/auth0-react";
+import LogoutButton from '../components/LogoutButton';
 
 function Navbar() {
 
@@ -18,9 +19,12 @@ function Navbar() {
           <Link to="/vaccination-reminders">Vaccination Reminders</Link>
           <Link to="/as-to-qs">Answers To Your Questions</Link>
           {isAuthenticated && (
-            <Link to="profile">
-              <img src={user.picture || "/avatar.svg"} height="40" widht="40"/>
-            </Link>
+            <>
+              <Link to="profile">
+                <img src={user.picture || "/avatar.svg"} height="40" widht="40"/>
+              </Link>
+              <LogoutButton />
+            </>
           )}
           
         </div>

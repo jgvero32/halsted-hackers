@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import VaccinationReminders from  './VaccinationReminders/VaccinationReminders'
 import SetReminder from  './SetReminder/SetReminder'
 import WelcomePage from './WelcomePage/Welcome';
+import Home from  './Home/Home'
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<WelcomePage />} />
         <Route path="vaccination-reminders" element={ <VaccinationReminders />} />
         <Route path="set-reminder/:type" element={ <SetReminder />} />
+        <Route path="/home" element={ <Home />} />
         </Routes>
     </div>
   );
