@@ -19,11 +19,6 @@ export const sendEmail = (to, subject, text) => {
     text: text
   }
 
-  console.log(mailOption, {
-    user: process.env.NODEMAILER_EMAIL,
-    pass: process.env.NODEMAILER_PASS
-  })
-
   transporter.sendMail(mailOption, function(error, info){
     if (error) {
       console.error(error);

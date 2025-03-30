@@ -1,15 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './SetReminder.module.css';
+import { vaccines } from './vaccineData';
 
 function SetReminder() {
-    const isParent = window.location.pathname.includes('parent');
-    const type = isParent ? 'parent' : 'child';
+  const params= useParams()
+  const isParent = window.location.pathname.includes('parent');
+  const type = isParent ? 'parent' : 'child';
   const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [parentVaccines, setParentVaccines] = useState([{ name: '', startDate: '' }]);
-
 
   const handleCheckboxChange = (e) => {
     const { value, checked } = e.target;
@@ -33,17 +34,17 @@ function SetReminder() {
     setIsModalOpen(true);
 
     const parentId = "0";
-    const childId = "0";
+    const childId = params.selectedChild;
 
     const formattedData = {
         vaccines: vaccines.map((vaccine) => ({
-        vaccine_name: vaccine.name,
-        doses: Array.from({ length: vaccine.doses }).map((_, doseIndex) => ({
-            dose_name: `Dose ${doseIndex + 1}`,
-            dose_status: selectedItems.includes(`${vaccine.name} - Dose ${doseIndex + 1}`),
-            start_date: new Date().toISOString(),
-            end_date: new Date().toISOString(),
-        })),
+          vaccine_name: vaccine.name,
+          doses: vaccine.doses
+            .filter(dose => selectedItems.includes(`${vaccine.name} - ${dose.dose_name}`))
+            .map(dose => ({
+              dose_name: dose.dose_name,
+              dose_status: true
+            })),
         })),
     };
 
@@ -74,7 +75,8 @@ function SetReminder() {
     if (type === 'parent') {
         setParentVaccines([{ name: '', startDate: '' }]);
       } else {
-        setSelectedItems([]);
+        window.location.reload()
+        // setSelectedItems([]);
       }
   };
 
@@ -84,20 +86,6 @@ function SetReminder() {
     navigate('/vaccination-reminders');
   };
 
-  const vaccines = [
-    { name: 'RSV antibody', doses: 2, tooltip: 'Protects against contagious viral RSV infections of the lungs These infections are especially dangerous for infants and young children.' },
-    { name: 'Hepatitis B', doses: 3, tooltip: 'Prevents Hepatitis B virus infection of the liver. Not getting vaccinated cause chronic liver infection, liver failure, liver cancer, and death.' },
-    { name: 'Rotavirus', doses: 3, tooltip: 'Protects against rotavirus infections, a contagious viral infection of the gut; spread through the mouth from hands and food contaminated with stool. Disease complications can lead to Severe diarrhea, dehydration, and death.' },
-    { name: 'DTaP', doses: 5, tooltip: 'Protects against diphtheria, tetanus, and pertussis. Not getting vaccinated can cause swelling of the heart muscle, heart failure, coma, paralysis, death, infections of lungs, etc.' },
-    { name: 'Hib', doses: 5, tooltip: 'Prevents Haemophilus influenzae type b infections. Disease complications depend on the part of the body infected, but can include brain damage, hearing loss, loss of arm or leg, and death.' },
-    { name: 'Pneumococcal', doses: 5, tooltip: 'Protects against pneumococcal infections. Disease complications depend on the part of the body infected, but can include infection of the lungs (pneumonia), blood poisoning, infection of the lining of the brain and spinal cord, and death.' },
-    { name: 'Polio', doses: 5, tooltip: 'Prevents poliovirus infections of nerves and brain spread through the mouth from stool on contaminated hands, food or liquid, and by air and direct contact. If caught, paralysis and death are common.' },
-    { name: 'COVID-19', doses: 1, tooltip: 'Protects against COVID-19, a contagious viral infection of the nose, throat, or lungs; may feel like a cold or flu. Spread through air and direct contact.' },
-    { name: 'Influenza/Flu', doses: 6, tooltip: 'Protects against seasonal influenza. Complications are infection of the lungs (pneumonia), sinus and ear infections, worsening of underlying heart or lung conditions, and death.' },
-    { name: 'MMR', doses: 2, tooltip: 'Protects against measles, mumps, and rubella. Measles and Mumps can cause brain swelling; Rubella is very dangerous in pregnant women.' },
-    { name: 'Chickenpox', doses: 2, tooltip: 'Prevents chickenpox (varicella), which is a contagious viral infection that causes fever, headache, and an itchy, blistering rash; spread through air and direct contact.' },
-    { name: 'Hepatitis A', doses: 2, tooltip: 'Prevents Hepatitis A virus infection. Disease complications include liver failure and death.' },
-  ];
 
   // Calculate unselected vaccines and doses
   const unselectedVaccines = vaccines.map((vaccine) => {
@@ -107,10 +95,37 @@ function SetReminder() {
     return { name: vaccine.name, doses: unselectedDoses };
   }).filter((vaccine) => vaccine.doses.length > 0); // Only include vaccines with unselected doses
 
+
+  useEffect(() => {
+    const fetchVaccines = async () => {
+      const childId = params.selectedChild
+      const res = await fetch(`http://localhost:5000/vaccine/0/${childId}`)
+      if (!res.ok) {
+        console.error("Cannot fetch vaccines for child")
+        return
+      }
+
+      const datas = await res.json()
+      console.log(datas)
+
+      const newSelectedItems = []
+      for (const vaccine of datas.vaccines) {
+        for (const dose of vaccine.doses) {
+          if (dose.dose_status) {
+            newSelectedItems.push(`${vaccine.vaccine_name} - ${dose.dose_name}`)
+          }
+        }
+      }
+      setSelectedItems(newSelectedItems)
+    }
+
+    fetchVaccines()
+  }, [])
+
   return (
     <div className={styles.formBox}>
 
-{type === 'parent' ? (
+      {type === 'parent' ? (
         <>
           <h2 className={styles.questionTitle}>Enter Vaccines You Want to Be Notified About</h2>
           <form className={styles.formItems} onSubmit={handleSubmit}>
@@ -157,14 +172,14 @@ function SetReminder() {
             >
               {vaccine.name}
             </label>
-            {Array.from({ length: 6 }).map((_, doseIndex) => (
+            {vaccine.doses.map((dose, doseIndex) => (
               <input
                 key={doseIndex}
                 type="checkbox"
-                value={`${vaccine.name} - Dose ${doseIndex + 1}`}
+                value={`${vaccine.name} - ${dose.dose_name}`}
                 onChange={handleCheckboxChange}
-                checked={selectedItems.includes(`${vaccine.name} - Dose ${doseIndex + 1}`)}
-                disabled={doseIndex >= vaccine.doses}
+                disabled={dose.dose_status}
+                checked={selectedItems.includes(`${vaccine.name} - ${dose.dose_name}`)}
               />
             ))}
           </div>

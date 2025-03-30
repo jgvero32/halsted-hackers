@@ -2,7 +2,7 @@ import express from "express"
 import cors from "cors";
 import dotenv from "dotenv";
 import { sendEmail } from "./nodemailer/nodemailer.js";
-import { db, getAllVaccinesForChild, getAllVaccinesForParent, updateDoseForChild, updateDoseForParent } from "./firebase/firebase.js";
+import { db, getAllChildrenGivenParent, getAllVaccinesForChild, getAllVaccinesForParent, initChild, initVaccineForChild, updateDoseForChild, updateDoseForParent } from "./firebase/firebase.js";
 import morgan from "morgan";
 
 import "./cron/cron.js" // run cron job
@@ -46,14 +46,21 @@ app.get("/vaccine/:parentId/:childId", async (req, res) => {
 
 // initialize vaccines for parent
 app.post("/vaccine/:parentId/", (req, res) => {
-  
-  res.json({})
+
+  res.json({msg: "success"})
 })
 
 // initialize vaccines for child
-app.post("/vaccine/:parentId/:childId", (req, res) => {
-
-  res.json({})
+app.post("/vaccine/:parentId/:childId", async (req, res) => {
+  try {
+    await initChild(req.params.parentId, req.params.childId, req.body)
+    await initVaccineForChild(req.params.parentId, req.params.childId)
+    res.json({msg: "success"})
+  }
+  catch (err) {
+    console.error("Something is wrong with initializing vaccines for child", err)
+    res.status(500).end()
+  }
 })
 
 // update dose for parent
@@ -64,24 +71,37 @@ app.post("/dose/:parentId/", async (req, res) => {
     res.json({msg: "success"})
   }
   catch(err) {
-    console.error("Something is wrong with updatingdose for child", err)
+    console.error("Something is wrong with updating dose for child", err)
     res.status(500).end()
   }
 })
 
-// update dose for child
+// update doses for child
 app.post("/dose/:parentId/:childId", async (req, res) => {
   try {
-    const dose = req.body
-    await updateDoseForChild(req.params.parentId, req.params.childId, dose)
+    const doses = req.body
+    // console.log(doses)
+    await updateDoseForChild(req.params.parentId, req.params.childId, doses)
     res.json({msg: "success"})
   }
   catch(err) {
-    console.error("Something is wrong with updatingdose for child", err)
+    console.error("Something is wrong with updating dose for child", err)
     res.status(500).end()
   }
 })
 
+// get children
+app.get("/children/:parentId", async (req, res) => {
+  try {
+    const childrenData = await getAllChildrenGivenParent(req.params.parentId)
+    console.log(childrenData)
+    res.json({children: childrenData})
+  }
+  catch (err) {
+    console.error("Something is wrong with getting all children", err)
+    res.status(500).end()
+  }
+})
 
 // check test email
 app.get("/email", (req, res) => {
@@ -102,5 +122,6 @@ app.get("/store", async (req, res) => {
     res.send("Test storing error")
   }
 })
+
 
 app.listen(5000, () => console.log("Server running on port 5000"));

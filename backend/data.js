@@ -1,17 +1,17 @@
 import { Timestamp } from "firebase-admin/firestore";
 
-const vaccines = [
+export const vaccines = [
   { 
     name: 'Rotavirus',
     doses: [
       {
         dose_name: "Dose 1",
-        start_month: 2,
+        start_month: 0, // should be 2
         duration: 1
       },
       {
         dose_name: "Dose 2",
-        start_month: 4,
+        start_month: 1, // should be 4
         duration: 1
       },
       {
@@ -26,12 +26,12 @@ const vaccines = [
     doses: [
       {
         dose_name: "Dose 1",
-        start_month: 2,
+        start_month: 0, // 2
         duration: 1
       },
       {
         dose_name: "Dose 2",
-        start_month: 4,
+        start_month: 1, // 4
         duration: 1
       },
       {
@@ -74,25 +74,27 @@ const vaccines = [
   },
 ];
 
-export const initialVaccines = () => ({
-  vaccines: vaccines.map((vaccine) => ({
-    vaccine_name: vaccine.name,
-    doses: Array.from({ length: vaccine.doses }).map(dose => {
-      const start_date = new Date()
-      start_date.setMonth(start_date.getMonth() + dose.start_month)
+export const initialVaccines = () => {
+  return ({
+    vaccines: vaccines.map((vaccine) => ({
+      vaccine_name: vaccine.name,
+      doses: vaccine.doses.map(dose => {
+        const start_date = new Date()
+        start_date.setMonth(start_date.getMonth() + dose.start_month)
 
-      const end_date = new Date()
-      end_date.setMonth(end_date.getMonth() + dose.start_month + dose.duration)
+        const end_date = new Date()
+        end_date.setMonth(end_date.getMonth() + dose.start_month + dose.duration)
 
-      return {
-        dose_name: dose.dose_name,
-        dose_status: false,
-        start_date: Timestamp.fromDate(start_date),
-        end_date: Timestamp.fromDate(end_date),
-      }
-    })
-  })),
-});
+        return {
+          dose_name: dose.dose_name,
+          dose_status: false,
+          start_date: Timestamp.fromDate(start_date),
+          end_date: Timestamp.fromDate(end_date),
+        }
+      })
+    })),
+  }
+)};
 
 // GET /vaccine/:parentId : get all vaccines for parent
 const getVaccinesForParent = {

@@ -1,15 +1,11 @@
 import './VaccinationReminders.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function VaccinationReminders() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedChild, setSelectedChild] = useState('');
-  const [children, setChildren] = useState([
-    { id: '1', name: 'Emily' },
-    { id: '2', name: 'John' },
-    { id: '3', name: 'Sam' },
-  ]);
+  const [children, setChildren] = useState([]);
   const [newChildName, setNewChildName] = useState('');
   const navigate = useNavigate();
 
@@ -28,25 +24,61 @@ function VaccinationReminders() {
 
   const handleSetReminder = () => {
     if (selectedChild) {
-      navigate(`/set-reminder/children/${selectedChild}`);
+      navigate(`/set-reminder/children/${selectedChild.split(",")[1]}`);
     } else {
       alert('Please select a child before proceeding.');
     }
   };
 
-  const handleAddChild = () => {
-    if (newChildName.trim()) {
-      const newChild = {
-        id: (children.length + 1).toString(),
-        name: newChildName.trim(),
-      };
-      setChildren([...children, newChild]); 
-      setNewChildName('');
-      alert(`${newChild.name} has been added to the list.`);
-    } else {
-      alert('Please enter a valid name.');
-    }
+  const handleAddChild = async () => {
+      if (newChildName.trim()) {
+        const newChild = {
+          id: (children.length).toString(),
+          name: newChildName.trim(),
+        };
+        try {
+          await fetch(`http://localhost:5000/vaccine/0/${newChild.id}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: newChild.name
+            })
+          })
+          setChildren([...children, newChild]); 
+          setNewChildName('');
+          alert(`${newChild.name} has been added to the list.`);
+        }
+        catch (err) {
+          console.error(err)
+        }
+      } else {
+        alert('Please enter a valid name.');
+      }
   };
+
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch("http://localhost:5000/children/0")
+        if (!res.ok) {
+          console.error("Getting all children error")
+        }
+        else {
+          const data = await res.json()
+          setChildren(data.children)
+        }
+      }
+      catch(err) {
+        console.error("Something is wrong with getting all children data", err)
+      }
+    }
+
+    fetchData()
+
+  }, [])
 
   return (
     <>
