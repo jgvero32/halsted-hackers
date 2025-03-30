@@ -3,6 +3,7 @@ import Navbar from './Navbar/Navbar';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import VaccinationReminders from  './VaccinationReminders/VaccinationReminders'
 import SetReminder from  './SetReminder/SetReminder'
+import Home from  './Home/Home'
 
 
 function App() {
@@ -10,9 +11,10 @@ function App() {
     <div className="app-background">
       <Navbar />
       <Routes>
-        <Route path="/" element={<Navigate to="/vaccination-reminders" />} />
+        <Route path="/" element={<Navigate to="/home" />} />
         <Route path="vaccination-reminders" element={ <VaccinationReminders />} />
         <Route path="set-reminder/:type" element={ <SetReminder />} />
+        <Route path="/home" element={ <Home />} />
         </Routes>
     </div>
   );
